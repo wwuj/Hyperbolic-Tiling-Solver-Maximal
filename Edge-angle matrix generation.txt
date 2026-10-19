@@ -168,16 +168,21 @@ end
 Run_Mode = 2;    % 1: server, 2: laptop
 n = 7;           % Number of polygon sides, n >= 3.
 jieshu = 3;      % First n angle entries are nonnegative integers summing to jieshu.
-Target_RE = 0;   % Edge rank, 0 for angle-only; valid range 0..n-1.
-Target_RA = 3;   % Angle rank, 0 for edge-only; valid range 0..n.
+Target_RE = 2;   % Edge rank, 0 for angle-only; valid range 0..n-1.
+Target_RA = 5;   % Angle rank, 0 for edge-only; valid range 0..n.
 % Angle balance policy:
 %   0: no balance check (legacy behavior).
 %   1: existing weak check: ones(1,n) lies in the first-n-column row space.
 %   2: mode 1 plus strong balance on the completed legal angle-row list C.
-%      Require integers q_i>=1 and q>=1 such that
-%      sum_i q_i*C(i,1:n) = q*ones(1,n).
+%      C contains every nonnegative integer angle row of order jieshu whose
+%      addition does not increase the rank of the original angle matrix.
+%      Require rational k_i>=0, not all zero, such that
+%      sum_i k_i*C(i,1:n) = ones(1,n). Zero coefficients are allowed.
 %      The returned A_results still contains the original rank basis, not C.
-pingheng = 2;
+%   3: retain only cases that fail mode 2 (not strongly balanced).
+%      Includes cases that fail weak balance and weak-only balanced cases.
+%      Modes 2/3 affect angle-only and joint cases; edge-only is unchanged.
+pingheng = 3;
 pu = 0;          % Only used when Target_RE=0: 0=S_n permutations, 1=D_n shifts/full reflection.
 
 validateattributes(n, {'numeric'}, {'scalar', 'integer', '>=', 3}, mfilename, 'n');
@@ -185,7 +190,7 @@ validateattributes(jieshu, {'numeric'}, {'scalar', 'integer', 'positive'}, mfile
 validateattributes(Target_RE, {'numeric'}, {'scalar', 'integer', '>=', 0, '<=', n - 1}, mfilename, 'Target_RE');
 validateattributes(Target_RA, {'numeric'}, {'scalar', 'integer', '>=', 0, '<=', n}, mfilename, 'Target_RA');
 validateattributes(pingheng, {'numeric', 'logical'}, ...
-    {'scalar', 'real', 'finite', 'integer', '>=', 0, '<=', 2}, ...
+    {'scalar', 'real', 'finite', 'integer', '>=', 0, '<=', 3}, ...
     mfilename, 'pingheng');
 validateattributes(pu, {'numeric', 'logical'}, {'scalar', 'integer', '>=', 0, '<=', 1}, mfilename, 'pu');
 
@@ -331,3 +336,4 @@ else
     end
     fprintf('>>> Non-equivalent joint edge-angle states: %d\n', result_count);
 end
+
