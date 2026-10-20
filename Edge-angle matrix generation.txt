@@ -182,7 +182,7 @@ Target_RA = 5;   % Angle rank, 0 for edge-only; valid range 0..n.
 %   3: retain only cases that fail mode 2 (not strongly balanced).
 %      Includes cases that fail weak balance and weak-only balanced cases.
 %      Modes 2/3 affect angle-only and joint cases; edge-only is unchanged.
-pingheng = 3;
+pingheng = 2;
 pu = 0;          % Only used when Target_RE=0: 0=S_n permutations, 1=D_n shifts/full reflection.
 
 validateattributes(n, {'numeric'}, {'scalar', 'integer', '>=', 3}, mfilename, 'n');
